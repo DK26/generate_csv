@@ -1,16 +1,52 @@
+/*!
+This tool outputs a CSV file with random data.
+*/
 use clap::{Arg, App, ArgMatches};
+use std::process::Output;
+use std::error::Error;
 
-struct Schema {
+// Alias our own Result type to avoid verbosity
+type SchemaResult<T> = Result<T, &'static (dyn Error + Send + Sync)>;
+
+struct CSV;
+
+trait Schema {
+
+    type Output;
+
+    fn build_schema(&self, schema_file: &str) -> SchemaResult<Output>;
 
 }
-fn build_schema(schema_file: &str) -> Schema {
-    return Schema{};
+
+#[allow(dead_code)]
+impl Schema for CSV {
+
+    type Output = Self;
+
+    fn build_schema(&self, schema_file: &str) -> SchemaResult<Output> {
+        unimplemented!()
+    }
 }
+
+// struct Schema;
+//
+// #[allow(dead_code)]
+// impl Schema {
+//     pub fn new() -> Self {
+//         Schema {}
+//     }
+// }
+//
+// fn build_schema(schema_file: &str) -> Schema {
+//     Schema
+// }
+
 
 fn get_cmd_argument_matches<'a>() -> ArgMatches<'a> {
-    return App::new("Csv Generator")
+
+    App::new("CSV Generator")
     .version("0.1.0")
-    .about("Generates csvs with random data")
+    .about("Generates a CSV with random data")
     .arg(Arg::with_name("schema")
              .short("s")
              .long("schema")
@@ -27,7 +63,7 @@ fn get_cmd_argument_matches<'a>() -> ArgMatches<'a> {
              .long("rows")
              .takes_value(true)
              .help("Number of data rows to generate"))
-    .get_matches();
+    .get_matches()
 }
 
 fn main() {
@@ -40,9 +76,11 @@ fn main() {
     println!("The output will be written to: {}, using schema file: {}, generating {} rows", outfile, schema_file, rows);
 
     //parse schema toml
-    let schema = build_schema(schema_file);
+    //let schema = build_schema(schema_file);
+    let csv = CSV.build_schema(schema_file);
+
     //generate csv from schema
-    //BONUS concurent line generation, feed to writer
+    //BONUS concurrent line generation, feed to writer
     
     //println!("Hello, world!");
 }
