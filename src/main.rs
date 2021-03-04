@@ -6,7 +6,7 @@ use std::process::Output;
 use std::error::Error;
 
 // Alias our own Result type to avoid verbosity
-type SchemaResult<T> = Result<T, &'static (dyn Error + Send + Sync)>;
+type SchemaResult<T> = Result<T, Box<dyn Error>>;
 
 struct CSV;
 
@@ -66,7 +66,7 @@ fn get_cmd_argument_matches<'a>() -> ArgMatches<'a> {
     .get_matches()
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
 
     let matches = get_cmd_argument_matches();
     let outfile = matches.value_of("outfile").unwrap_or("output.csv");
@@ -83,4 +83,6 @@ fn main() {
     //BONUS concurrent line generation, feed to writer
     
     //println!("Hello, world!");
+
+    Ok(())
 }
